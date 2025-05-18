@@ -2,29 +2,35 @@ package dev.Lavacar.Nego.service;
 
 import dev.Lavacar.Nego.model.Users;
 import dev.Lavacar.Nego.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+// Serviço para operações relacionadas a usuários, incluindo registro
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEnconder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEnconder) {
+    // Construtor para injeção de dependências
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEnconder = passwordEnconder;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    //Post
+    // Registra um novo usuário com senha criptografada
     public Users registerUser(String username, String password) {
-        String passwordEncrypted = passwordEnconder.encode(password);
+        // Criptografa a senha usando BCrypt
+        String passwordEncrypted = passwordEncoder.encode(password);
+        // Cria uma nova entidade Users com a senha criptografada
         Users user = new Users(username, passwordEncrypted);
+        // Salva o usuário no banco de dados
         return userRepository.save(user);
     }
 
+    // Busca um usuário pelo nome de usuário
     public Users findByUsername(String username) {
+        // Retorna o usuário encontrado ou null se não existir
         return userRepository.findByUsername(username).orElse(null);
     }
 }
